@@ -1,5 +1,6 @@
 import { MediaProvider, useMediaContext } from "./MediaPlayback";
 import { Video } from "./MediaPlayback/Video";
+import React from "react";
 
 function VideoPlayer() {
   return (
@@ -7,7 +8,7 @@ function VideoPlayer() {
       width="810"
       height="450"
       controls
-      src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      // src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
     />
   );
 }
@@ -23,6 +24,7 @@ function Duration() {
 }
 
 function App() {
+  const playerRef = React.useRef(null);
   return (
     <main
       style={{
@@ -30,7 +32,7 @@ function App() {
         flexDirection: "column",
       }}
     >
-      <MediaProvider>
+      <MediaProvider mediaSource="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8">
         <VideoPlayer />
         <CurrentTime />
         <Duration />

@@ -150,7 +150,7 @@ export function MediaProvider({
         initialBitrateSelection === InitialBitrateSelection.AUTO;
 
       if (Hls.isSupported()) {
-        const newHls = new Hls({ autoStartLoad });
+        const newHls = new Hls({ autoStartLoad, enableWorker: false, });
         _hlsRef.current = newHls;
         newHls.attachMedia(media as HTMLVideoElement);
         newHls.on(Hls.Events.MEDIA_ATTACHED, () => {
