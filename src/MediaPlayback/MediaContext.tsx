@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useRef } from "react";
+import React, { useContext } from "react";
 import {useSnapshot} from 'valtio'
 
 import { MediaContextType, MediaContextProps, MediaState } from "./types";
@@ -16,7 +16,7 @@ export const _useMediaContext = () => {
   return mediaContext;
 };
 
-export function useMediaContext(): MediaContextProps {
+export function useMediaContext(): MediaContextProps & {mediaState: ReturnType<typeof useSnapshot<MediaState>>} {
   const {
     _mediaState,
     setCurrentAudioTrackId,
@@ -42,5 +42,5 @@ export function useMediaContext(): MediaContextProps {
     setCurrentBitrateIndex,
     setCurrentSubtitleId,
     setCurrentAudioTrackId,
-  } as MediaContextProps;
+  };
 }
