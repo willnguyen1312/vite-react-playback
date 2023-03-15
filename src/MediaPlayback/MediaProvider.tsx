@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type Hls from "hls.js";
 
 import { clamp, uniqueId } from "./utils";
@@ -43,7 +43,27 @@ export function MediaProvider({
   const _timeoutLoadingId = useRef<number>();
   const _doneSetInitialTime = useRef<boolean>(initialTime === 0);
   const _doneLoadedMetadata = useRef<boolean>(false);
-  const _mediaStateRef = useRef(createMediaState());
+  // const _mediaStateRef = useRef(createMediaState());
+  const [mediaState, setMediaState] = useState<MediaState>({
+    currentTime: 0,
+    duration: 0,
+    ended: false,
+    muted: false,
+    paused: true,
+    playbackRate: 1,
+    rotate: 0,
+    seeking: false,
+    status: MediaStatus.LOADING,
+    volume: 1,
+    buffered: null,
+    autoBitrateEnabled: true,
+    bitrateInfos: [],
+    currentBitrateIndex: DEFAULT_AUTO_BITRATE_INDEX,
+    subtitleTracks: [],
+    currentSubtitleTrackId: DEFAULT_SUBTITLE_ID,
+    audioTracks: [],
+    currentAudioTrackId: DEFAULT_AUDIO_TRACK_ID,
+  });
 
   const _getMedia = (): HTMLMediaElement => {
     if (_mediaRef.current) {
@@ -62,13 +82,17 @@ export function MediaProvider({
   };
 
   const _updateState = (updateValues: Partial<MediaState>) => {
-    for (const key in updateValues) {
-      if (Object.prototype.hasOwnProperty.call(updateValues, key)) {
-        const prop = key as keyof MediaState;
-        // @ts-ignore
-        _mediaStateRef.current[prop] = updateValues[prop];
-      }
-    }
+    setMediaState((prev) => ({
+      ...prev,
+      ...updateValues,
+    }));
+    // for (const key in updateValues) {
+    //   if (Object.prototype.hasOwnProperty.call(updateValues, key)) {
+    //     const prop = key as keyof MediaState;
+    //     // @ts-ignore
+    //     _mediaStateRef.current[prop] = updateValues[prop];
+    //   }
+    // }
   };
 
   const releaseHlsResource = () => {
@@ -117,7 +141,7 @@ export function MediaProvider({
     // In case media's duration is not available, we fall back to duration from state for early seeking if available
     const normalizedDuration = Number.isFinite(media.duration)
       ? media.duration
-      : _mediaStateRef.current.duration;
+      : mediaState.duration;
     const newCurrentTime = clamp(currentTime, 0, normalizedDuration);
 
     if (newCurrentTime !== media.currentTime) {
@@ -514,7 +538,8 @@ export function MediaProvider({
         setRotate,
 
         _mediaRef,
-        _mediaState: _mediaStateRef.current,
+        // _mediaState: _mediaStateRef.current,
+        _mediaState: mediaState,
 
         // Internal event handlers - we use these to hook into media's events
         _onLoadedMetadata,

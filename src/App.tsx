@@ -84,6 +84,10 @@ function Rotation() {
   );
 }
 
+function Static() {
+  return <p>I'm static. Don't re-render me 🥲</p>;
+}
+
 function App() {
   const playerRef = React.useRef(null);
   return (
@@ -106,6 +110,8 @@ function App() {
         <CurrentTime />
         <Rotation />
         <Duration />
+        <Static />
+
         <DisplayData />
       </MediaProvider>
     </main>
