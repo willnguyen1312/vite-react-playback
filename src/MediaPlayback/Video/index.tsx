@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 import { _useMediaContext, useMediaContext } from "../MediaContext";
 import { callAll, useMergeRefs } from "../utils";
 import { MergedEventListeners } from "../types";
+import { useVideoSizeBox } from "./useVideoSizeBox";
 
 export interface VideoProps {
   /**
@@ -67,6 +68,29 @@ export const Video = React.forwardRef<
       _applyInitialDuration,
     } = _useMediaContext();
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const [mediaElement, setMediaElement] = useState<HTMLMediaElement | null>();
+    const { mediaState } = useMediaContext();
+
+    useEffect(() => {
+      setMediaElement(_mediaRef.current);
+    }, []);
+
+    const isDimensionsSwitched =
+      mediaState.rotate === 90 || mediaState.rotate === 270;
+
+    const videoSizeBox = useVideoSizeBox({
+      isDimensionsSwitched,
+      videoElement: mediaElement as HTMLVideoElement,
+      wrapperElement: wrapperRef.current as HTMLElement,
+    });
+
+    let scale = 1;
+
+    if (mediaElement && isDimensionsSwitched) {
+      const { videoHeight, videoWidth } = mediaElement as HTMLVideoElement;
+      scale =
+        Math.max(videoWidth, videoHeight) / Math.min(videoWidth, videoHeight);
+    }
 
     const mergedEventListeners: MergedEventListeners = {
       onCanPlay: callAll(_onCanPlay, onCanPlay),
@@ -94,14 +118,24 @@ export const Video = React.forwardRef<
     }, [rest.src]);
 
     return (
-      <div ref={wrapperRef}>
+      <div
+        ref={wrapperRef}
+        style={{
+          height: "100%",
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <video
           // Prevent mobile safari from going fullscreen on play by default
           playsInline
           style={{
-            // transform: `rotate(${rotate}deg) scale(${scale})`,
-            // width: videoSizeBox.width,
-            // height: videoSizeBox.height,
+            transform: `rotate(${mediaState.rotate}deg) scale(${scale})`,
+            width: videoSizeBox.width,
+            height: videoSizeBox.height,
             ...style,
           }}
           {...mergedEventListeners}

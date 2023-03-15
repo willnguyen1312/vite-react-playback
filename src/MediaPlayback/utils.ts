@@ -57,3 +57,48 @@ export function useMergeRefs<T>(...refs: (ReactRef<T> | undefined)[]) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, refs);
 }
+
+export const calculateDimensions = ({
+  videoWidth,
+  videoHeight,
+  wrapperWidth,
+  wrapperHeight,
+  isDimensionsSwitched = false,
+}: {
+  videoWidth: number;
+  videoHeight: number;
+  wrapperWidth: number;
+  wrapperHeight: number;
+  isDimensionsSwitched?: boolean;
+}): {
+  newWidth: number;
+  newHeight: number;
+} => {
+  const mediaRatio = isDimensionsSwitched
+    ? videoHeight / videoWidth
+    : videoWidth / videoHeight;
+  const wrapperRatio = wrapperWidth / wrapperHeight;
+
+  // Use Math.trunc for IE's weirdness
+  // as it doesn't return the decimal part in some cases
+  if (mediaRatio >= wrapperRatio) {
+    const newWidth = wrapperWidth;
+    const newHeight = Math.trunc(newWidth / mediaRatio);
+    return { newWidth, newHeight };
+  } else {
+    const newHeight = wrapperHeight;
+    const newWidth = Math.trunc(newHeight * mediaRatio);
+    return { newWidth, newHeight };
+  }
+};
+
+export const sleep = (millisecond: number) =>
+  new Promise((resolve) => setTimeout(resolve, millisecond));
+
+export const waitForVideoWidth = async (videoElement: HTMLVideoElement) => {
+  // Safari and some browsers don't handle the video event's onloadedMetadata the same as other browsers
+  // Wait until the video element dimensions ready and continue
+  while (videoElement.videoWidth === 0) {
+    await sleep(100);
+  }
+};

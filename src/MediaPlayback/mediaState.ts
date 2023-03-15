@@ -21,7 +21,7 @@ export const createMediaState = () => {
     status: MediaStatus.LOADING,
     volume: 1,
     buffered: null,
-    mediaElement: null,
+    // mediaElement: null,
     autoBitrateEnabled: true,
     bitrateInfos: [],
     currentBitrateIndex: DEFAULT_AUTO_BITRATE_INDEX,

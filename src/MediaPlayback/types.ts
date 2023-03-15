@@ -59,7 +59,7 @@ export interface MediaState {
   audioTracks: AudioTrack[];
   currentAudioTrackId: number;
   // Media element
-  mediaElement: HTMLMediaElement | null;
+  // mediaElement: HTMLMediaElement | null;
 
   // Media properties
   currentTime: number;

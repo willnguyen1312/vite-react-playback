@@ -123,7 +123,7 @@ export function MediaProvider({
   const _applyInitialDuration = () => {
     _mediaStateRef.current.duration = initialDuration;
     _applyInitialTime(initialDuration);
-  }
+  };
 
   const _applyInitialTime = (duration: number) => {
     // We only want to seek ahead of time when duration is available
@@ -268,7 +268,7 @@ export function MediaProvider({
   }, [mediaSource]);
 
   useEffect(() => {
-    _applyInitialDuration()
+    _applyInitialDuration();
   }, [mediaSource]);
 
   const checkMediaHasDataToPlay = () => {
@@ -305,7 +305,7 @@ export function MediaProvider({
     _applyInitialTime(mediaElement.duration);
     setPlaybackRate(initialPlaybackRate);
 
-    _mediaStateRef.current.mediaElement = mediaElement;
+    // _mediaStateRef.current.mediaElement = mediaElement;
     _mediaStateRef.current.duration = mediaElement.duration;
     if (!_pausedRef.current) {
       mediaElement.play();
@@ -480,16 +480,15 @@ export function MediaProvider({
     }
   };
 
-  const setRotate = (rotate: number) =>
-    (_mediaStateRef.current.rotate = rotate % 360);
+  const setRotate = (rotate: number) => {
+    _mediaStateRef.current.rotate = rotate % 360;
+  };
 
   // These methods might be called by both MSE and none-MSE players
   // That's why we don't use _getHls helper to avoid error thrown on none-MSE players
   const _startLoad = () => _hlsRef.current?.startLoad();
 
   const _stopLoad = () => _hlsRef.current?.stopLoad();
-
-
 
   return (
     <MediaContext.Provider

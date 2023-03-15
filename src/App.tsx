@@ -66,6 +66,24 @@ function DisplayData() {
   return <p>{displayData}</p>;
 }
 
+function Rotation() {
+  const { mediaState, setRotate } = useMediaContext();
+  const rotateClockWise = () => setRotate(mediaState.rotate + 90);
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          rotateClockWise();
+        }}
+      >
+        Rotate 90deg
+      </button>
+      <p>Current rotation: {mediaState.rotate}</p>
+    </div>
+  );
+}
+
 function App() {
   const playerRef = React.useRef(null);
   return (
@@ -82,8 +100,11 @@ function App() {
         // initialPlaybackRate={10}
       >
         {/* <Playable src="aha" /> */}
-        <VideoPlayer />
+        <div style={{ height: 500 }}>
+          <VideoPlayer />
+        </div>
         <CurrentTime />
+        <Rotation />
         <Duration />
         <DisplayData />
       </MediaProvider>
