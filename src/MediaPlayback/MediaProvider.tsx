@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import Hls from 'hls.js'
+import type Hls from "hls.js";
 
 import { clamp, uniqueId } from "./utils";
 import { MediaContext } from "./MediaContext";
@@ -146,11 +146,12 @@ export function MediaProvider({
     const media = _getMedia();
 
     const initHls = async () => {
+      const { default: Hls } = await import("hls.js");
       const autoStartLoad =
         initialBitrateSelection === InitialBitrateSelection.AUTO;
 
       if (Hls.isSupported()) {
-        const newHls = new Hls({ autoStartLoad, enableWorker: false, });
+        const newHls = new Hls({ autoStartLoad, enableWorker: false });
         _hlsRef.current = newHls;
         newHls.attachMedia(media as HTMLVideoElement);
         newHls.on(Hls.Events.MEDIA_ATTACHED, () => {

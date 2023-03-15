@@ -76,13 +76,13 @@ function App() {
       }}
     >
       <MediaProvider
-        // mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8"
-        initialDuration={3000}
-        initialTime={10}
-        initialPlaybackRate={10}
+        mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8"
+        // initialDuration={3000}
+        // initialTime={10}
+        // initialPlaybackRate={10}
       >
-        <Playable src="aha" />
-        {/* <VideoPlayer /> */}
+        {/* <Playable src="aha" /> */}
+        <VideoPlayer />
         <CurrentTime />
         <Duration />
         <DisplayData />
