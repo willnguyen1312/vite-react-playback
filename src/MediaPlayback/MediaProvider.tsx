@@ -14,6 +14,7 @@ import {
   AudioTrack,
   BitrateInfo,
   InitialBitrateSelection,
+  MediaState,
   SubtitleTrack,
 } from "./types";
 
@@ -60,6 +61,16 @@ export function MediaProvider({
     return hls;
   };
 
+  const _updateState = (updateValues: Partial<MediaState>) => {
+    for (const key in updateValues) {
+      if (Object.prototype.hasOwnProperty.call(updateValues, key)) {
+        const prop = key as keyof MediaState;
+        // @ts-ignore
+        _mediaStateRef.current[prop] = updateValues[prop];
+      }
+    }
+  };
+
   const releaseHlsResource = () => {
     const hls = _hlsRef.current;
     if (hls) {
@@ -84,7 +95,7 @@ export function MediaProvider({
     // Avoid showing loading indicator early on fast stream which can be annoying to user
     // Similar to Youtube's experience
     _timeoutLoadingId.current = setTimeout(() => {
-      _mediaStateRef.current.status = MediaStatus.LOADING;
+      _updateState({ status: MediaStatus.LOADING });
     }, 1000);
   };
 
@@ -93,7 +104,7 @@ export function MediaProvider({
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-    _mediaStateRef.current.status = MediaStatus.CAN_PLAY;
+    _updateState({ status: MediaStatus.CAN_PLAY });
   };
 
   const setPlaybackRate = (playbackRate: number) => {
@@ -121,7 +132,7 @@ export function MediaProvider({
   };
 
   const _applyInitialDuration = () => {
-    _mediaStateRef.current.duration = initialDuration;
+    _updateState({ duration: initialDuration });
     _applyInitialTime(initialDuration);
   };
 
@@ -138,8 +149,7 @@ export function MediaProvider({
       return;
     }
 
-    _mediaStateRef.current.rotate = 0;
-    _mediaStateRef.current.autoBitrateEnabled = true;
+    _updateState({ rotate: 0, autoBitrateEnabled: true });
     // Initial status is LOADING, this is meaningful on stream change
     // as we want to display a loading indicator again until media data is available
     setLoadingStatus();
@@ -184,15 +194,13 @@ export function MediaProvider({
             newHls.startLoad();
           }
 
-          _mediaStateRef.current.bitrateInfos = bitrateInfos;
-          _mediaStateRef.current.subtitleTracks = [];
+          _updateState({ bitrateInfos, subtitleTracks: [] });
         });
 
         newHls.on(Hls.Events.LEVEL_SWITCHING, (_, { level }) => {
           const { buffered } = _getMedia();
           setLoadingStatus();
-          _mediaStateRef.current.currentBitrateIndex = level;
-          _mediaStateRef.current.buffered = buffered;
+          _updateState({ currentBitrateIndex: level, buffered });
         });
 
         newHls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, (_, data) => {
@@ -201,11 +209,11 @@ export function MediaProvider({
               id: track.id,
               lang: track.lang || "",
             }));
-          _mediaStateRef.current.subtitleTracks = subtitleTracks;
+          _updateState({ subtitleTracks });
         });
 
         newHls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, (_, data) => {
-          _mediaStateRef.current.currentAudioTrackId = data.id;
+          _updateState({ currentAudioTrackId: data.id });
         });
 
         newHls.on(Hls.Events.AUDIO_TRACKS_UPDATED, (_, data) => {
@@ -216,11 +224,11 @@ export function MediaProvider({
               name: track.name,
             })
           );
-          _mediaStateRef.current.audioTracks = audioTracks;
+          _updateState({ audioTracks });
         });
 
         newHls.on(Hls.Events.AUDIO_TRACK_SWITCHED, (_, data) => {
-          _mediaStateRef.current.currentAudioTrackId = data.id;
+          _updateState({ currentAudioTrackId: data.id });
         });
 
         newHls.on(Hls.Events.FRAG_BUFFERED, setCanPlayStatus);
@@ -233,17 +241,17 @@ export function MediaProvider({
               case Hls.ErrorTypes.NETWORK_ERROR:
                 // try to recover network error
                 newHls.startLoad();
-                _mediaStateRef.current.status = MediaStatus.RECOVERING;
+                _updateState({ status: MediaStatus.RECOVERING });
                 break;
               case Hls.ErrorTypes.MEDIA_ERROR:
                 // try to recover media error
                 newHls.recoverMediaError();
-                _mediaStateRef.current.status = MediaStatus.RECOVERING;
+                _updateState({ status: MediaStatus.RECOVERING });
                 break;
               default:
                 // cannot recover
                 newHls.destroy();
-                _mediaStateRef.current.status = MediaStatus.ERROR;
+                _updateState({ status: MediaStatus.ERROR });
                 break;
             }
           } else {
@@ -305,8 +313,7 @@ export function MediaProvider({
     _applyInitialTime(mediaElement.duration);
     setPlaybackRate(initialPlaybackRate);
 
-    // _mediaStateRef.current.mediaElement = mediaElement;
-    _mediaStateRef.current.duration = mediaElement.duration;
+    _updateState({ duration: mediaElement.duration });
     if (!_pausedRef.current) {
       mediaElement.play();
     }
@@ -314,9 +321,7 @@ export function MediaProvider({
 
   const _onSeeking = (event: React.SyntheticEvent<HTMLMediaElement, Event>) => {
     const { currentTime, ended, seeking } = event.currentTarget;
-    _mediaStateRef.current.currentTime = currentTime;
-    _mediaStateRef.current.ended = ended;
-    _mediaStateRef.current.seeking = seeking;
+    _updateState({ currentTime, ended, seeking });
     if (!checkMediaHasDataToPlay()) {
       setLoadingStatus();
     }
@@ -324,35 +329,33 @@ export function MediaProvider({
 
   const _onSeeked = (event: React.SyntheticEvent<HTMLMediaElement, Event>) => {
     setCanPlayStatus();
-    _mediaStateRef.current.seeking = event.currentTarget.seeking;
+
+    _updateState({ seeking: event.currentTarget.seeking });
   };
 
   const _onRateChange = (
     event: React.SyntheticEvent<HTMLMediaElement, Event>
   ) => {
-    _mediaStateRef.current.playbackRate = event.currentTarget.playbackRate;
+    _updateState({ playbackRate: event.currentTarget.playbackRate });
   };
 
   const _onVolumeChange = (
     event: React.SyntheticEvent<HTMLMediaElement, Event>
   ) => {
     const { muted, volume } = event.currentTarget;
-    _mediaStateRef.current.muted = muted;
-    _mediaStateRef.current.volume = volume;
+    _updateState({ muted, volume });
   };
 
   const _onPause = (event: React.SyntheticEvent<HTMLMediaElement, Event>) => {
     const { paused, ended } = event.currentTarget;
     _pausedRef.current = paused;
-    _mediaStateRef.current.paused = paused;
-    _mediaStateRef.current.ended = ended;
+    _updateState({ paused, ended });
   };
 
   const _onPlay = (event: React.SyntheticEvent<HTMLMediaElement, Event>) => {
     const { paused, ended } = event.currentTarget;
     _pausedRef.current = paused;
-    _mediaStateRef.current.paused = paused;
-    _mediaStateRef.current.ended = ended;
+    _updateState({ paused, ended });
   };
 
   const _onProgress = (
@@ -364,7 +367,7 @@ export function MediaProvider({
     if (checkMediaHasDataToPlay()) {
       setCanPlayStatus();
     }
-    _mediaStateRef.current.buffered = buffered;
+    _updateState({ buffered });
   };
 
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/waiting_event
@@ -379,7 +382,7 @@ export function MediaProvider({
     event: React.SyntheticEvent<HTMLMediaElement, Event>
   ) => {
     if (_doneSetInitialTime.current) {
-      _mediaStateRef.current.currentTime = event.currentTarget.currentTime;
+      _updateState({ currentTime: event.currentTarget.currentTime });
     }
   };
 
@@ -389,16 +392,16 @@ export function MediaProvider({
     const duration = event.currentTarget.duration;
     // Handle Infinity value occasionally on Safari
     if (Number.isFinite(duration)) {
-      _mediaStateRef.current.duration = duration;
+      _updateState({ duration });
     }
   };
 
   const _onError = () => {
-    _mediaStateRef.current.status = MediaStatus.ERROR;
+    _updateState({ status: MediaStatus.ERROR });
   };
 
   const _onEnded = () => {
-    _mediaStateRef.current.ended = true;
+    _updateState({ ended: true });
   };
 
   const _onEmptied = () => {
@@ -408,8 +411,7 @@ export function MediaProvider({
 
     setLoadingStatus();
     // We need to reset this value to update scrubber's indicator
-    _mediaStateRef.current.buffered = buffered;
-    _mediaStateRef.current.currentTime = currentTime;
+    _updateState({ buffered, currentTime });
   };
 
   const setVolume = (volume: number) => {
@@ -430,7 +432,7 @@ export function MediaProvider({
     // We need to store the latest paused state in ref for later access
     _pausedRef.current = paused;
     // Update UI
-    _mediaStateRef.current.paused = paused;
+    _updateState({ paused });
 
     if (paused) {
       const playPromise = _playPromise.current;
@@ -456,9 +458,9 @@ export function MediaProvider({
     bitrateIndex = DEFAULT_AUTO_BITRATE_INDEX
   ) => {
     const autoBitrateEnabled = bitrateIndex === DEFAULT_AUTO_BITRATE_INDEX;
-    _mediaStateRef.current.autoBitrateEnabled = autoBitrateEnabled;
+    _updateState({ autoBitrateEnabled });
     if (!autoBitrateEnabled) {
-      _mediaStateRef.current.currentBitrateIndex = bitrateIndex;
+      _updateState({ currentBitrateIndex: bitrateIndex });
     }
     const hlsInstance = _getHls();
     if (hlsInstance.currentLevel !== bitrateIndex) {
@@ -481,7 +483,7 @@ export function MediaProvider({
   };
 
   const setRotate = (rotate: number) => {
-    _mediaStateRef.current.rotate = rotate % 360;
+    _updateState({ rotate: rotate % 360 });
   };
 
   // These methods might be called by both MSE and none-MSE players
