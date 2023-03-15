@@ -84,6 +84,23 @@ function Rotation() {
   );
 }
 
+function PlayableControl() {
+  const { mediaState, setPaused } = useMediaContext();
+  return (
+    <button
+      onClick={() => {
+        if (mediaState.paused) {
+          setPaused(false);
+        } else {
+          setPaused(true);
+        }
+      }}
+    >
+      {mediaState.paused ? "Play" : "Pause"}
+    </button>
+  );
+}
+
 function App() {
   const playerRef = React.useRef(null);
   return (
@@ -95,14 +112,15 @@ function App() {
     >
       <MediaProvider
         mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8"
-        // initialDuration={3000}
-        // initialTime={10}
-        // initialPlaybackRate={10}
+        initialDuration={3000}
+        initialTime={0}
+        initialPlaybackRate={10}
       >
-        {/* <Playable src="aha" /> */}
-        <div style={{ height: 500 }}>
+        <Playable src="aha" />
+        <PlayableControl />
+        {/* <div style={{ height: 500 }}>
           <VideoPlayer />
-        </div>
+        </div> */}
         <CurrentTime />
         <Rotation />
         <Duration />
