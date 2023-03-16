@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { useSnapshot } from "valtio";
 
 import { MediaContextType, MediaContextProps, MediaState } from "./types";
 
@@ -16,7 +15,7 @@ export const _useMediaContext = () => {
 };
 
 export function useMediaContext(): MediaContextProps & {
-  mediaState: ReturnType<typeof useSnapshot<MediaState>>;
+  mediaState: MediaState;
 } {
   const {
     _mediaState,
