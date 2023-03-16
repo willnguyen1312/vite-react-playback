@@ -113,8 +113,6 @@ export const Video = React.forwardRef<
 
     useEffect(() => {
       _applyInitialDuration();
-      // This is intentional as we only apply initialDuration on src change
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rest.src]);
 
     return (
@@ -130,8 +128,6 @@ export const Video = React.forwardRef<
         }}
       >
         <video
-          // Prevent mobile safari from going fullscreen on play by default
-          playsInline
           style={{
             transform: `rotate(${mediaState.rotate}deg) scale(${scale})`,
             width: videoSizeBox.width,
