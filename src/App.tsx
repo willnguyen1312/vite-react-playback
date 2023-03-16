@@ -1,7 +1,6 @@
 import { MediaProvider, useMediaContext } from "./MediaPlayback";
 import { Video } from "./MediaPlayback/Video";
 import React from "react";
-import { Playable } from "./MediaPlayback/Playable";
 
 const cities = [
   "East Susie",
@@ -41,7 +40,6 @@ function VideoPlayer() {
       width="810"
       height="450"
       controls
-      // src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
     />
   );
 }
@@ -58,17 +56,6 @@ function Duration() {
     duration,
   }));
   return <h1>Duration: {mediaState.duration}</h1>;
-}
-
-function DisplayData() {
-  const { mediaState } = useMediaContext(({ currentTime }) => ({
-    currentTime,
-  }));
-  const displayData = mockedData
-    .slice(0, Math.round(mediaState.currentTime))
-    .join(" -> ");
-
-  return <p>{displayData}</p>;
 }
 
 function Rotation() {
@@ -114,7 +101,6 @@ function App() {
         <Rotation />
         <Duration />
         <Static />
-        <DisplayData />
       </MediaProvider>
     </main>
   );
