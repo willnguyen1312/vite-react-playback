@@ -123,7 +123,7 @@ const hijackMediaElement = (
       timerId = window.setInterval(() => {
         const incrementedTime = (1 * mediaElement.playbackRate) / frequency;
         const factor = _direction === "forward" ? 1 : -1;
-        mediaElement.currentTime += incrementedTime * factor;
+        mediaElement.currentTime += (incrementedTime * factor);
       }, 1000 / frequency);
 
       mediaElement.paused = false;
