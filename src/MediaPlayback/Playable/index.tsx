@@ -113,11 +113,11 @@ const hijackMediaElement = (
   Object.assign(mediaElement, {
     play: () => {
       if (mediaElement.currentTime === 0 && _direction === "backward") {
-        return;
+        mediaElement.currentTime = duration
       }
 
       // Reset current time to mimic browser behavior
-      if (duration === mediaElement.currentTime) {
+      if (duration === mediaElement.currentTime && _direction === "forward") {
         mediaElement.currentTime = 0;
       }
 
