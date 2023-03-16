@@ -85,7 +85,7 @@ function Rotation() {
 }
 
 function Static() {
-  return <p>I'm static. Don't re-render me 🥲</p>;
+  return <h2>I'm static. No need to re-render me 🥹</h2>;
 }
 
 function App() {
@@ -97,13 +97,7 @@ function App() {
         flexDirection: "column",
       }}
     >
-      <MediaProvider
-        mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8"
-        // initialDuration={3000}
-        // initialTime={10}
-        // initialPlaybackRate={10}
-      >
-        {/* <Playable src="aha" /> */}
+      <MediaProvider mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8">
         <div style={{ height: 500 }}>
           <VideoPlayer />
         </div>
