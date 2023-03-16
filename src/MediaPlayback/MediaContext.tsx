@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
-import {useSnapshot} from 'valtio'
+import { useSnapshot } from "valtio";
 
 import { MediaContextType, MediaContextProps, MediaState } from "./types";
 
 export const MediaContext = React.createContext<MediaContextType | null>(null);
-
 
 export const _useMediaContext = () => {
   const mediaContext = useContext(MediaContext);
@@ -16,7 +15,9 @@ export const _useMediaContext = () => {
   return mediaContext;
 };
 
-export function useMediaContext(): MediaContextProps & {mediaState: ReturnType<typeof useSnapshot<MediaState>>} {
+export function useMediaContext(): MediaContextProps & {
+  mediaState: ReturnType<typeof useSnapshot<MediaState>>;
+} {
   const {
     _mediaState,
     setCurrentAudioTrackId,
@@ -29,7 +30,7 @@ export function useMediaContext(): MediaContextProps & {mediaState: ReturnType<t
     setRotate,
     setVolume,
   } = _useMediaContext();
-  const mediaState = useSnapshot(_mediaState)
+  const mediaState = useSnapshot(_mediaState);
 
   return {
     mediaState,
