@@ -2,38 +2,6 @@ import { MediaProvider, useMediaContext } from "./MediaPlayback";
 import { Video } from "./MediaPlayback/Video";
 import React from "react";
 
-const cities = [
-  "East Susie",
-  "Port Lailatown",
-  "Port Cathy",
-  "North Felipe",
-  "Skilesburgh",
-  "East Sunny",
-  "New Jonatanshire",
-  "Cincinnati",
-  "Chynaville",
-  "Gladyceberg",
-  "Jaskolskiview",
-  "Thousand Oaks",
-  "North Myrlmouth",
-  "West Macibury",
-  "Hermanshire",
-  "Muellertown",
-  "Barryburgh",
-  "New Ellis",
-  "East Rowlandport",
-  "Weissnatmouth",
-];
-
-const generateMockData = (duration: number) => {
-  return Array.from({ length: duration }, () => {
-    const randomIndex = Math.floor(Math.random() * cities.length);
-    return cities[randomIndex];
-  });
-};
-
-const mockedData = generateMockData(3000);
-
 function VideoPlayer() {
   return (
     <Video
@@ -53,15 +21,6 @@ function CurrentTime() {
 function Duration() {
   const { mediaState } = useMediaContext();
   return <h1>Duration: {mediaState.duration}</h1>;
-}
-
-function DisplayData() {
-  const { mediaState } = useMediaContext();
-  const displayData = mockedData
-    .slice(0, Math.round(mediaState.currentTime))
-    .join(" -> ");
-
-  return <p>{displayData}</p>;
 }
 
 function Rotation() {
