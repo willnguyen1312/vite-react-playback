@@ -71,7 +71,7 @@ export function MediaProvider({
     }
   };
 
-  const releaseHlsResource = () => {
+  const _releaseHlsResource = () => {
     const hls = _hlsRef.current;
     if (hls) {
       hls.destroy();
@@ -272,14 +272,14 @@ export function MediaProvider({
 
     initHls();
 
-    return releaseHlsResource;
+    return _releaseHlsResource;
   }, [mediaSource]);
 
   useEffect(() => {
     _applyInitialDuration();
   }, [mediaSource]);
 
-  const checkMediaHasDataToPlay = () => {
+  const _checkMediaHasDataToPlay = () => {
     const { buffered, currentTime } = _getMedia();
 
     for (let index = 0; index < buffered.length; index++) {
@@ -322,7 +322,7 @@ export function MediaProvider({
   const _onSeeking = (event: React.SyntheticEvent<HTMLMediaElement, Event>) => {
     const { currentTime, ended, seeking } = event.currentTarget;
     _updateState({ currentTime, ended, seeking });
-    if (!checkMediaHasDataToPlay()) {
+    if (!_checkMediaHasDataToPlay()) {
       setLoadingStatus();
     }
   };
@@ -364,7 +364,7 @@ export function MediaProvider({
     const { buffered } = event.currentTarget;
     // There are cases when loaded buffer does not include necessary data to play at current time
     // Thus, we need to double-check here
-    if (checkMediaHasDataToPlay()) {
+    if (_checkMediaHasDataToPlay()) {
       setCanPlayStatus();
     }
     _updateState({ buffered });
@@ -373,7 +373,7 @@ export function MediaProvider({
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/waiting_event
   // The name is misleading as the event still gets fired when data is available for playing
   const _onWaiting = () => {
-    if (!checkMediaHasDataToPlay()) {
+    if (!_checkMediaHasDataToPlay()) {
       setLoadingStatus();
     }
   };
