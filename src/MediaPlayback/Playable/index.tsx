@@ -120,12 +120,10 @@ const hijackMediaElement = (
         mediaElement.currentTime += (incrementedTime * factor);
       }, 1000 / frequency);
 
-      mediaProperties.paused = false;
       mediaElement.paused = false;
     },
     pause: () => {
       clearTimer();
-      mediaProperties.paused = true;
       mediaElement.paused = true;
     },
   });

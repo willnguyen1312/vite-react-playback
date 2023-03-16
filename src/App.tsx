@@ -62,7 +62,7 @@ function PlayableControl() {
     <>
       <Playable src="aha" direction={direction} />
       <button
-        disabled={direction === "backward" && mediaState.paused}
+        disabled={direction === "backward" && mediaState.currentTime === 0}
         onClick={() => {
           if (mediaState.paused) {
             setPaused(false);
