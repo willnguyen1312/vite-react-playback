@@ -85,13 +85,6 @@ export function MediaProvider({
       ...prev,
       ...updateValues,
     }));
-    // for (const key in updateValues) {
-    //   if (Object.prototype.hasOwnProperty.call(updateValues, key)) {
-    //     const prop = key as keyof MediaState;
-    //     // @ts-ignore
-    //     _mediaStateRef.current[prop] = updateValues[prop];
-    //   }
-    // }
   };
 
   const _releaseHlsResource = () => {
