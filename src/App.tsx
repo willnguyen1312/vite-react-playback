@@ -1,5 +1,4 @@
 import { MediaProvider, useMediaContext } from "./MediaPlayback";
-import { Video } from "./MediaPlayback/Video";
 import React from "react";
 import { Playable } from "./MediaPlayback/Playable";
 
@@ -35,17 +34,6 @@ const generateMockData = (duration: number) => {
 
 const mockedData = generateMockData(3000);
 
-function VideoPlayer() {
-  return (
-    <Video
-      width="810"
-      height="450"
-      controls
-      // src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-    />
-  );
-}
-
 function CurrentTime() {
   const { mediaState } = useMediaContext();
   const { currentTime } = mediaState;
@@ -64,24 +52,6 @@ function DisplayData() {
     .join(" -> ");
 
   return <p>{displayData}</p>;
-}
-
-function Rotation() {
-  const { mediaState, setRotate } = useMediaContext();
-  const rotateClockWise = () => setRotate(mediaState.rotate + 90);
-
-  return (
-    <div>
-      <button
-        onClick={() => {
-          rotateClockWise();
-        }}
-      >
-        Rotate 90deg
-      </button>
-      <p>Current rotation: {mediaState.rotate}</p>
-    </div>
-  );
 }
 
 function PlayableControl() {
@@ -112,17 +82,13 @@ function App() {
     >
       <MediaProvider
         mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8"
-        initialDuration={3000}
+        initialDuration={30000}
         initialTime={0}
-        initialPlaybackRate={10}
+        initialPlaybackRate={20}
       >
         <Playable src="aha" />
         <PlayableControl />
-        {/* <div style={{ height: 500 }}>
-          <VideoPlayer />
-        </div> */}
         <CurrentTime />
-        <Rotation />
         <Duration />
         <DisplayData />
       </MediaProvider>
