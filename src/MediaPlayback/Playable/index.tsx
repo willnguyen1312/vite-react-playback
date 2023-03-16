@@ -116,7 +116,6 @@ const hijackMediaElement = (
         mediaElement.currentTime = duration
       }
 
-      // Reset current time to mimic browser behavior
       if (duration === mediaElement.currentTime && _direction === "forward") {
         mediaElement.currentTime = 0;
       }
