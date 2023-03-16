@@ -30,7 +30,6 @@ export function useMediaContext(): MediaContextProps & {
     setRotate,
     setVolume,
   } = _useMediaContext();
-  // const mediaState = useSnapshot(_mediaState)
 
   return {
     mediaState: _mediaState,
