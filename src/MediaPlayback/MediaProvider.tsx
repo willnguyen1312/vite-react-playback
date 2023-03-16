@@ -537,8 +537,7 @@ export function MediaProvider({
         setRotate,
 
         _mediaRef,
-        // _mediaState: _mediaStateRef.current,
-        _mediaState: mediaState,
+        mediaState,
 
         // Internal event handlers - we use these to hook into media's events
         _onLoadedMetadata,

@@ -18,7 +18,7 @@ export function useMediaContext(): MediaContextProps & {
   mediaState: MediaState;
 } {
   const {
-    _mediaState,
+    mediaState,
     setCurrentAudioTrackId,
     setCurrentBitrateIndex,
     setCurrentSubtitleId,
@@ -31,7 +31,7 @@ export function useMediaContext(): MediaContextProps & {
   } = _useMediaContext();
 
   return {
-    mediaState: _mediaState,
+    mediaState,
     setPaused,
     setMuted,
     setCurrentTime,

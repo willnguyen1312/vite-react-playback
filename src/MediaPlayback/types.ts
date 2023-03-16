@@ -82,7 +82,7 @@ export type MediaContextType = {
   _mediaRef: React.RefObject<HTMLMediaElement>;
   _startLoad: () => void;
   _stopLoad: () => void;
-  _mediaState: MediaState;
+  mediaState: MediaState;
 
   // Event Listeners
   _onLoadedMetadata: MediaEventListener;
