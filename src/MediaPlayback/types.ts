@@ -3,6 +3,7 @@ import { useSnapshot } from "valtio";
 
 import { callAll } from "./utils";
 import { MediaStatus } from "./constants";
+import { createMediaState } from "./MediaObserver";
 
 export type MediaEventListener = (
   event: React.SyntheticEvent<HTMLMediaElement, Event>
@@ -58,8 +59,6 @@ export interface MediaState {
   currentSubtitleTrackId: number;
   audioTracks: AudioTrack[];
   currentAudioTrackId: number;
-  // Media element
-  // mediaElement: HTMLMediaElement | null;
 
   // Media properties
   currentTime: number;
@@ -82,7 +81,7 @@ export type MediaContextType = {
   _mediaRef: React.RefObject<HTMLMediaElement>;
   _startLoad: () => void;
   _stopLoad: () => void;
-  _mediaState: MediaState;
+  _mediaState: ReturnType<typeof createMediaState>;
 
   // Event Listeners
   _onLoadedMetadata: MediaEventListener;

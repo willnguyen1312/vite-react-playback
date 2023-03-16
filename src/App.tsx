@@ -47,18 +47,23 @@ function VideoPlayer() {
 }
 
 function CurrentTime() {
-  const { mediaState } = useMediaContext();
-  const { currentTime } = mediaState;
-  return <h1>Current time: {currentTime}</h1>;
+  const { mediaState } = useMediaContext(({ currentTime }) => ({
+    currentTime,
+  }));
+  return <h1>Current time: {mediaState.currentTime}</h1>;
 }
 
 function Duration() {
-  const { mediaState } = useMediaContext();
+  const { mediaState } = useMediaContext(({ duration }) => ({
+    duration,
+  }));
   return <h1>Duration: {mediaState.duration}</h1>;
 }
 
 function DisplayData() {
-  const { mediaState } = useMediaContext();
+  const { mediaState } = useMediaContext(({ currentTime }) => ({
+    currentTime,
+  }));
   const displayData = mockedData
     .slice(0, Math.round(mediaState.currentTime))
     .join(" -> ");
@@ -67,7 +72,9 @@ function DisplayData() {
 }
 
 function Rotation() {
-  const { mediaState, setRotate } = useMediaContext();
+  const { mediaState, setRotate } = useMediaContext(({ rotate }) => ({
+    rotate,
+  }));
   const rotateClockWise = () => setRotate(mediaState.rotate + 90);
 
   return (
@@ -84,6 +91,10 @@ function Rotation() {
   );
 }
 
+function Static() {
+  return <h2>I'm static. No need to re-render me 🥹</h2>
+}
+
 function App() {
   const playerRef = React.useRef(null);
   return (
@@ -95,17 +106,14 @@ function App() {
     >
       <MediaProvider
         mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8"
-        // initialDuration={3000}
-        // initialTime={10}
-        // initialPlaybackRate={10}
       >
-        {/* <Playable src="aha" /> */}
         <div style={{ height: 500 }}>
           <VideoPlayer />
         </div>
         <CurrentTime />
         <Rotation />
         <Duration />
+        <Static />
         <DisplayData />
       </MediaProvider>
     </main>

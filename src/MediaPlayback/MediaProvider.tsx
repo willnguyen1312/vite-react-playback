@@ -9,7 +9,7 @@ import {
   DEFAULT_SUBTITLE_ID,
   MediaStatus,
 } from "./constants";
-import { createMediaState } from "./mediaState";
+import { createMediaState } from "./MediaObserver";
 import {
   AudioTrack,
   BitrateInfo,
@@ -62,13 +62,7 @@ export function MediaProvider({
   };
 
   const _updateState = (updateValues: Partial<MediaState>) => {
-    for (const key in updateValues) {
-      if (Object.prototype.hasOwnProperty.call(updateValues, key)) {
-        const prop = key as keyof MediaState;
-        // @ts-ignore
-        _mediaStateRef.current[prop] = updateValues[prop];
-      }
-    }
+    _mediaStateRef.current.update(updateValues)
   };
 
   const _releaseHlsResource = () => {
@@ -117,7 +111,7 @@ export function MediaProvider({
     // In case media's duration is not available, we fall back to duration from state for early seeking if available
     const normalizedDuration = Number.isFinite(media.duration)
       ? media.duration
-      : _mediaStateRef.current.duration;
+      : _mediaStateRef.current.getState().duration;
     const newCurrentTime = clamp(currentTime, 0, normalizedDuration);
 
     if (newCurrentTime !== media.currentTime) {
