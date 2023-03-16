@@ -149,7 +149,7 @@ export const Playable = ({
   } = _useMediaContext();
   const hijackedMediaObj = useRef<ReturnType<typeof hijackMediaElement>>();
 
-  // Hijact media element
+  // Hijack media element
   useEffect(() => {
     const mediaElement = _mediaRef.current;
     if (mediaElement && !hijackedMediaObj.current && _initialDuration) {
