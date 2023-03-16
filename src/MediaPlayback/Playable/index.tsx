@@ -70,7 +70,7 @@ const hijackMediaElement = (
     set(newValue: number) {
       const normalizedValue = clamp(
         newValue,
-        newValue,
+        0,
         mediaProperties.duration
       );
       mediaProperties.currentTime = normalizedValue;
