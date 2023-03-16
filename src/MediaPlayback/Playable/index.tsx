@@ -8,14 +8,16 @@ interface HijackedMediaElement extends HTMLMediaElement {
   duration: number;
 }
 
-type Direction = "forward" | "backward" 
+export type Direction = "forward" | "backward" 
 
 const hijackMediaElement = (
   mediaElement: HijackedMediaElement,
   { frequency, duration, direction }: { frequency: number; duration: number, direction: Direction }
 ): {
   cleanup: () => void;
+  updateDirection: (newDirection: Direction) => void
 } => {
+  let _direction = direction
   //  We store hijacked values here to differentiate from controlled properties of native media element
   //  Such as playbackRate, volume, etc
   const mediaProperties = {
@@ -103,7 +105,9 @@ const hijackMediaElement = (
 
   Object.assign(mediaElement, {
     play: () => {
-      clearTimer();
+      if (mediaElement.currentTime === 0 && _direction === 'backward') {
+        return
+      }
 
       // Reset current time to mimic browser behavior
       if (duration === mediaElement.currentTime) {
@@ -112,7 +116,7 @@ const hijackMediaElement = (
 
       timerId = window.setInterval(() => {
         const incrementedTime = (1 * mediaElement.playbackRate) / frequency;
-        const factor = direction === 'forward' ? 1 : -1
+        const factor = _direction === 'forward' ? 1 : -1
         mediaElement.currentTime += (incrementedTime * factor);
       }, 1000 / frequency);
 
@@ -128,6 +132,9 @@ const hijackMediaElement = (
 
   return {
     cleanup: clearTimer,
+    updateDirection(newDirection: Direction) {
+      _direction = newDirection
+    }
   };
 };
 
@@ -135,7 +142,7 @@ export interface PlayableProps {
   children?: React.ReactNode;
   frequency?: number;
   src?: string;
-  direction: Direction
+  direction?: Direction
 }
 
 export const Playable = ({
@@ -176,9 +183,13 @@ export const Playable = ({
         hijackedMediaObj.current.cleanup();
       }
     };
-    // This is intentional - we only need to run once on start-up
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (hijackedMediaObj.current) {
+      hijackedMediaObj.current.updateDirection(direction)
+    }
+  }, [direction])
 
   useEffect(() => {
     const mediaElement = _mediaRef.current;

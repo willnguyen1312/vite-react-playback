@@ -1,6 +1,6 @@
 import { MediaProvider, useMediaContext } from "./MediaPlayback";
-import React from "react";
-import { Playable } from "./MediaPlayback/Playable";
+import React, { useState } from "react";
+import { Direction, Playable } from "./MediaPlayback/Playable";
 
 const cities = [
   "East Susie",
@@ -56,18 +56,35 @@ function DisplayData() {
 
 function PlayableControl() {
   const { mediaState, setPaused } = useMediaContext();
+  const [direction, setDirection] = useState<Direction>("forward");
+
   return (
-    <button
-      onClick={() => {
-        if (mediaState.paused) {
-          setPaused(false);
-        } else {
-          setPaused(true);
-        }
-      }}
-    >
-      {mediaState.paused ? "Play" : "Pause"}
-    </button>
+    <>
+      <Playable src="aha" direction={direction} />
+      <button
+        disabled={direction === "backward" && mediaState.paused}
+        onClick={() => {
+          if (mediaState.paused) {
+            setPaused(false);
+          } else {
+            setPaused(true);
+          }
+        }}
+      >
+        {mediaState.paused ? "Play" : "Pause"}
+      </button>
+      <button
+        onClick={() => {
+          if (direction === "forward") {
+            setDirection("backward");
+          } else {
+            setDirection("forward");
+          }
+        }}
+      >
+        Direction: {direction === "forward" ? "forward" : "backward"}
+      </button>
+    </>
   );
 }
 
@@ -86,7 +103,6 @@ function App() {
         initialTime={0}
         initialPlaybackRate={20}
       >
-        <Playable src="aha" />
         <PlayableControl />
         <CurrentTime />
         <Duration />
