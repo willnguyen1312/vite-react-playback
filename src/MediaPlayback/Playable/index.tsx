@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 
 import { _useMediaContext } from "../MediaContext";
+import { clamp } from "../utils";
 
 interface HijackedMediaElement extends HTMLMediaElement {
   paused: boolean;
@@ -63,13 +64,18 @@ const hijackMediaElement = (
       return mediaProperties.currentTime;
     },
     set(newValue: number) {
-      const normalizedValue = Math.min(newValue, mediaProperties.duration);
+      const normalizedValue = clamp(newValue, newValue, mediaProperties.duration);
       mediaProperties.currentTime = normalizedValue;
       mediaElement.dispatchEvent(new window.CustomEvent("timeupdate"));
 
       // Prevent current time out of bound and dispatch ended event
       if (normalizedValue === mediaProperties.duration) {
         mediaElement.dispatchEvent(new window.CustomEvent("ended"));
+        mediaElement.pause();
+        return
+      }
+
+      if (normalizedValue === 0) {
         mediaElement.pause();
       }
     },
