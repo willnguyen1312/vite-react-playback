@@ -8,16 +8,20 @@ interface HijackedMediaElement extends HTMLMediaElement {
   duration: number;
 }
 
-export type Direction = "forward" | "backward" 
+export type Direction = "forward" | "backward";
 
 const hijackMediaElement = (
   mediaElement: HijackedMediaElement,
-  { frequency, duration, direction }: { frequency: number; duration: number, direction: Direction }
+  {
+    frequency,
+    duration,
+    direction,
+  }: { frequency: number; duration: number; direction: Direction }
 ): {
   cleanup: () => void;
-  updateDirection: (newDirection: Direction) => void
+  updateDirection: (newDirection: Direction) => void;
 } => {
-  let _direction = direction
+  let _direction = direction;
   //  We store hijacked values here to differentiate from controlled properties of native media element
   //  Such as playbackRate, volume, etc
   const mediaProperties = {
@@ -26,8 +30,6 @@ const hijackMediaElement = (
     playbackRate: 1,
     duration,
   };
-
-  let timerId: number;
 
   // configurable value is required to override readonly value of media element
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
@@ -66,7 +68,11 @@ const hijackMediaElement = (
       return mediaProperties.currentTime;
     },
     set(newValue: number) {
-      const normalizedValue = clamp(newValue, newValue, mediaProperties.duration);
+      const normalizedValue = clamp(
+        newValue,
+        newValue,
+        mediaProperties.duration
+      );
       mediaProperties.currentTime = normalizedValue;
       mediaElement.dispatchEvent(new window.CustomEvent("timeupdate"));
 
@@ -74,7 +80,7 @@ const hijackMediaElement = (
       if (normalizedValue === mediaProperties.duration) {
         mediaElement.dispatchEvent(new window.CustomEvent("ended"));
         mediaElement.pause();
-        return
+        return;
       }
 
       if (normalizedValue === 0) {
@@ -97,6 +103,7 @@ const hijackMediaElement = (
     },
   });
 
+  let timerId: number;
   const clearTimer = () => {
     if (timerId) {
       clearInterval(timerId);
@@ -105,8 +112,8 @@ const hijackMediaElement = (
 
   Object.assign(mediaElement, {
     play: () => {
-      if (mediaElement.currentTime === 0 && _direction === 'backward') {
-        return
+      if (mediaElement.currentTime === 0 && _direction === "backward") {
+        return;
       }
 
       // Reset current time to mimic browser behavior
@@ -116,8 +123,8 @@ const hijackMediaElement = (
 
       timerId = window.setInterval(() => {
         const incrementedTime = (1 * mediaElement.playbackRate) / frequency;
-        const factor = _direction === 'forward' ? 1 : -1
-        mediaElement.currentTime += (incrementedTime * factor);
+        const factor = _direction === "forward" ? 1 : -1;
+        mediaElement.currentTime += incrementedTime * factor;
       }, 1000 / frequency);
 
       mediaElement.paused = false;
@@ -131,8 +138,8 @@ const hijackMediaElement = (
   return {
     cleanup: clearTimer,
     updateDirection(newDirection: Direction) {
-      _direction = newDirection
-    }
+      _direction = newDirection;
+    },
   };
 };
 
@@ -140,7 +147,7 @@ export interface PlayableProps {
   children?: React.ReactNode;
   frequency?: number;
   src?: string;
-  direction?: Direction
+  direction?: Direction;
 }
 
 export const Playable = ({
@@ -149,7 +156,7 @@ export const Playable = ({
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/timeupdate_event
   frequency = 4,
   src = "",
-  direction = "forward"
+  direction = "forward",
 }: PlayableProps) => {
   const {
     _mediaRef,
@@ -185,9 +192,9 @@ export const Playable = ({
 
   useEffect(() => {
     if (hijackedMediaObj.current) {
-      hijackedMediaObj.current.updateDirection(direction)
+      hijackedMediaObj.current.updateDirection(direction);
     }
-  }, [direction])
+  }, [direction]);
 
   useEffect(() => {
     const mediaElement = _mediaRef.current;
