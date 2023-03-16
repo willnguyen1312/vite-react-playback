@@ -7,9 +7,11 @@ interface HijackedMediaElement extends HTMLMediaElement {
   duration: number;
 }
 
+type Direction = "forward" | "backward" 
+
 const hijackMediaElement = (
   mediaElement: HijackedMediaElement,
-  { frequency, duration }: { frequency: number; duration: number }
+  { frequency, duration, direction }: { frequency: number; duration: number, direction: Direction }
 ): {
   cleanup: () => void;
 } => {
@@ -104,7 +106,8 @@ const hijackMediaElement = (
 
       timerId = window.setInterval(() => {
         const incrementedTime = (1 * mediaElement.playbackRate) / frequency;
-        mediaElement.currentTime += incrementedTime;
+        const factor = direction === 'forward' ? 1 : -1
+        mediaElement.currentTime += (incrementedTime * factor);
       }, 1000 / frequency);
 
       mediaProperties.paused = false;
@@ -126,6 +129,7 @@ export interface PlayableProps {
   children?: React.ReactNode;
   frequency?: number;
   src?: string;
+  direction: Direction
 }
 
 export const Playable = ({
@@ -134,6 +138,7 @@ export const Playable = ({
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/timeupdate_event
   frequency = 4,
   src = "",
+  direction = "forward"
 }: PlayableProps) => {
   const {
     _mediaRef,
@@ -156,6 +161,7 @@ export const Playable = ({
       hijackedMediaObj.current = hijackMediaElement(mediaElement, {
         frequency,
         duration: _initialDuration,
+        direction,
       });
     }
 
