@@ -24,7 +24,7 @@ export interface MediaProviderProps {
   initialTime?: number;
   initialPlaybackRate?: number;
   initialBitrateSelection?: InitialBitrateSelection;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export function MediaProvider({
