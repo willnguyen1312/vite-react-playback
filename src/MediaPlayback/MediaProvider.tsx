@@ -497,14 +497,9 @@ export function MediaProvider({
       value={{
         _initialDuration: initialDuration,
         _applyInitialDuration,
-        setCurrentBitrateIndex,
-        setCurrentSubtitleId,
-        setCurrentAudioTrackId,
-
-        // Stream methods
         _startLoad,
         _stopLoad,
-
+        
         // Media methods
         setCurrentTime,
         setPlaybackRate,
@@ -512,7 +507,10 @@ export function MediaProvider({
         setMuted,
         setPaused,
         setRotate,
-
+        setCurrentBitrateIndex,
+        setCurrentSubtitleId,
+        setCurrentAudioTrackId,
+        
         _mediaRef,
         _mediaState: _mediaStateRef.current,
 
