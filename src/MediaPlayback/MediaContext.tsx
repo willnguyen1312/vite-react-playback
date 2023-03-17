@@ -18,9 +18,13 @@ export const _useMediaContext = () => {
   return mediaContext;
 };
 
-export function useMediaContext<TSelected = MediaState>(
-  selector: (context: MediaState) => TSelected = identity
-): { mediaState: TSelected } & MediaContextProps {
+export function useMediaContext(): {
+  mediaState: MediaState;
+} & MediaContextProps;
+export function useMediaContext<TSelected extends Partial<MediaState>>(
+  selector: (context: MediaState) => TSelected
+): { mediaState: TSelected } & MediaContextProps;
+export function useMediaContext(selector = identity): unknown {
   const mediaContext = _useMediaContext();
   const [, forceUpdate] = useReducer((_state: number) => _state + 1, 0);
   const mediaStateRef = useRef(selector(mediaContext._mediaState.getState()));
@@ -42,7 +46,6 @@ export function useMediaContext<TSelected = MediaState>(
 
   return {
     mediaState: mediaStateRef.current,
-
     setPaused: mediaContext.setPaused,
     setMuted: mediaContext.setMuted,
     setCurrentTime: mediaContext.setCurrentTime,
