@@ -211,10 +211,6 @@ export const Playable = ({
   }, [src]);
 
   return (
-    // We could have used div here instead of audio for semantic meaning
-    // Since we want to reuse all valuable properties like volume, playbackRate, etc
-    // We should use audio instead and pick up the ones we need and hide it from screen reader
-    // This is also beneficial in that the events that this component fires will have a media element as the target
     <audio
       hidden
       ref={_mediaRef}
