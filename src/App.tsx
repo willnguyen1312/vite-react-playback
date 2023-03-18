@@ -1,29 +1,9 @@
 import { MediaProvider, useMediaContext } from "./MediaPlayback";
 import React, { useState } from "react";
 import { Direction, Playable } from "./MediaPlayback/Playable";
+import { citiesData } from "./cities";
 
-const cities = [
-  "East Susie",
-  "Port Lailatown",
-  "Port Cathy",
-  "North Felipe",
-  "Skilesburgh",
-  "East Sunny",
-  "New Jonatanshire",
-  "Cincinnati",
-  "Chynaville",
-  "Gladyceberg",
-  "Jaskolskiview",
-  "Thousand Oaks",
-  "North Myrlmouth",
-  "West Macibury",
-  "Hermanshire",
-  "Muellertown",
-  "Barryburgh",
-  "New Ellis",
-  "East Rowlandport",
-  "Weissnatmouth",
-];
+const cities = citiesData.map((item) => item.name);
 
 const generateMockData = (duration: number) => {
   return Array.from({ length: duration }, () => {
