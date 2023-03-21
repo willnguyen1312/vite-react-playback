@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import type Hls from "hls.js";
+import Hls from "hls.js";
 
 import { clamp, uniqueId } from "./utils";
 import { MediaContext } from "./MediaContext";
@@ -9,7 +9,6 @@ import {
   DEFAULT_SUBTITLE_ID,
   MediaStatus,
 } from "./constants";
-import { createMediaState } from "./mediaState";
 import {
   AudioTrack,
   BitrateInfo,
@@ -172,7 +171,6 @@ export function MediaProvider({
     const media = _getMedia();
 
     const initHls = async () => {
-      const { default: Hls } = await import("hls.js");
       const autoStartLoad =
         initialBitrateSelection === InitialBitrateSelection.AUTO;
 
