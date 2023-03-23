@@ -43,7 +43,11 @@ export function MediaProvider({
   const _timeoutLoadingId = useRef<number>();
   const _doneSetInitialTime = useRef<boolean>(initialTime === 0);
   const _doneLoadedMetadata = useRef<boolean>(false);
-  const _mediaStateRef = useRef(createMediaState());
+  const _mediaStateRef = useRef<ReturnType<typeof createMediaState>>();
+
+  if (!_mediaStateRef.current) {
+    _mediaStateRef.current = createMediaState()
+  }
 
   const _getMedia = (): HTMLMediaElement => {
     if (_mediaRef.current) {
@@ -117,7 +121,7 @@ export function MediaProvider({
     // In case media's duration is not available, we fall back to duration from state for early seeking if available
     const normalizedDuration = Number.isFinite(media.duration)
       ? media.duration
-      : _mediaStateRef.current.duration;
+      : _mediaStateRef.current?.duration ?? 0;
     const newCurrentTime = clamp(currentTime, 0, normalizedDuration);
 
     if (newCurrentTime !== media.currentTime) {
