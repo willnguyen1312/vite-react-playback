@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useReducer, useRef } from "react";
+import React, { useContext } from "react";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
 import { dequal as isEqual } from "dequal";
 
 import { MediaContextType, MediaState, MediaContextProps } from "./types";
@@ -6,7 +7,7 @@ import { MediaContextType, MediaState, MediaContextProps } from "./types";
 export const MediaContext = React.createContext<MediaContextType | null>(null);
 const identity = (input: any) => {
   return input;
-}
+};
 
 export const _useMediaContext = () => {
   const mediaContext = useContext(MediaContext);
@@ -25,35 +26,37 @@ export function useMediaContext<TSelected extends Partial<MediaState>>(
   selector: (context: MediaState) => TSelected
 ): { mediaState: TSelected } & MediaContextProps;
 export function useMediaContext(selector = identity): unknown {
-  const mediaContext = _useMediaContext();
-  const [, forceUpdate] = useReducer((_state: number) => _state + 1, 0);
-  const mediaStateRef = useRef(selector(mediaContext._mediaState.getState()));
+  const {
+    setPaused,
+    setMuted,
+    setCurrentTime,
+    setPlaybackRate,
+    setVolume,
+    setRotate,
+    setCurrentBitrateIndex,
+    setCurrentSubtitleId,
+    setCurrentAudioTrackId,
+    _mediaState: { subscribe, getState },
+  } = _useMediaContext();
 
-  useEffect(() => {    
-    const { unsubscribe } = mediaContext._mediaState.subscribe((state) => {
-      
-      const hasSelector = selector !== identity;
-      const newState = selector(state);
-
-      if (!hasSelector || !isEqual(newState, mediaStateRef.current)) {
-        mediaStateRef.current = newState;
-        forceUpdate();
-      }
-    });
-
-    return unsubscribe;
-  }, []);
+  const mediaState = useSyncExternalStoreWithSelector(
+    subscribe,
+    getState,
+    getState,
+    selector,
+    isEqual
+  );
 
   return {
-    mediaState: mediaStateRef.current,
-    setPaused: mediaContext.setPaused,
-    setMuted: mediaContext.setMuted,
-    setCurrentTime: mediaContext.setCurrentTime,
-    setPlaybackRate: mediaContext.setPlaybackRate,
-    setVolume: mediaContext.setVolume,
-    setRotate: mediaContext.setRotate,
-    setCurrentBitrateIndex: mediaContext.setCurrentBitrateIndex,
-    setCurrentSubtitleId: mediaContext.setCurrentSubtitleId,
-    setCurrentAudioTrackId: mediaContext.setCurrentAudioTrackId,
+    mediaState,
+    setPaused,
+    setMuted,
+    setCurrentTime,
+    setPlaybackRate,
+    setVolume,
+    setRotate,
+    setCurrentBitrateIndex,
+    setCurrentSubtitleId,
+    setCurrentAudioTrackId,
   };
 }

@@ -6,10 +6,10 @@ import {
 } from "./constants";
 import { MediaState } from "./types";
 
-type Subscriber = (mediaState: MediaState) => void;
+type Subscriber = () => void;
 
 export const createMediaState = () => {
-  const currentMediaState: MediaState = {
+  let currentMediaState: MediaState = {
     currentTime: 0,
     duration: 0,
     ended: false,
@@ -30,21 +30,24 @@ export const createMediaState = () => {
     currentAudioTrackId: DEFAULT_AUDIO_TRACK_ID,
   };
 
-  const subscribers: Set<Subscriber> = new Set();
+  const listeners: Set<Subscriber> = new Set();
 
   return {
     subscribe: (subscriber: Subscriber) => {
-      subscribers.add(subscriber);
-      return {
-        unsubscribe: () => {
-          subscribers.delete(subscriber);
-        },
+      listeners.add(subscriber);
+      return () => {
+        listeners.delete(subscriber);
       };
     },
     update: (partialMediaState: Partial<MediaState>) => {
-      Object.assign(currentMediaState, partialMediaState);
-      subscribers.forEach((subscriber) => subscriber(currentMediaState));
+      currentMediaState = { ...currentMediaState, ...partialMediaState };
+
+      for (let listener of listeners) {
+        listener();
+      }
     },
-    getState: () => currentMediaState,
+    getState() {
+      return currentMediaState;
+    },
   };
 };
