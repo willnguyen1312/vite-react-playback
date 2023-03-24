@@ -78,7 +78,6 @@ function App() {
       }}
     >
       <MediaProvider
-        mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8"
         initialDuration={100}
         initialTime={0}
         initialPlaybackRate={20}
