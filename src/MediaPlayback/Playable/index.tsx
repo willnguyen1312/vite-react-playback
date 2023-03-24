@@ -197,17 +197,12 @@ export const Playable = ({
 
   useEffect(() => {
     const mediaElement = _mediaRef.current;
-    // We need to update hijacked media element's internal state at this point on component update lifecycle
-    // As duration property comes directly from MediaProvider to work across Video and Audio component
     if (mediaElement) {
       mediaElement.dispatchEvent(new window.CustomEvent("emptied"));
       (mediaElement as HijackedMediaElement).duration = _initialDuration;
       _applyInitialDuration();
       mediaElement.dispatchEvent(new window.CustomEvent("loadedmetadata"));
     }
-    // Dispatch loadedmetadata event to inform MediaProvider that it's ready to play
-    // This is intentional as we only use initialDuration once for initial value on src change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src]);
 
   return (
