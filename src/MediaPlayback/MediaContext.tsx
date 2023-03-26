@@ -43,3 +43,7 @@ export function useMediaContext(): MediaContextProps & {
     setCurrentAudioTrackId,
   };
 }
+
+// Skip the two below for brevity
+// HOC: withMediaContext(Component)
+// RenderProp: <MediaContextConsumer>{props => <Component />}</MediaContextConsumer>
