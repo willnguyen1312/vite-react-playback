@@ -22,8 +22,6 @@ const hijackMediaElement = (
   updateDirection: (newDirection: Direction) => void;
 } => {
   let _direction = direction;
-  //  We store hijacked values here to differentiate from controlled properties of native media element
-  //  Such as playbackRate, volume, etc
   const mediaProperties = {
     paused: true,
     currentTime: 0,
@@ -33,7 +31,6 @@ const hijackMediaElement = (
 
   // configurable value is required to override readonly value of media element
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-
   Object.defineProperty(mediaElement, "paused", {
     configurable: true,
     get() {
