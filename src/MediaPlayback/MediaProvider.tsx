@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import type Hls from "hls.js";
+import React, { useEffect, useRef, useState } from "react";
+import Hls from "hls.js";
 
 import { clamp, uniqueId } from "./utils";
 import { MediaContext } from "./MediaContext";
@@ -9,7 +9,6 @@ import {
   DEFAULT_SUBTITLE_ID,
   MediaStatus,
 } from "./constants";
-import { createMediaState } from "./mediaState";
 import {
   AudioTrack,
   BitrateInfo,
@@ -43,7 +42,26 @@ export function MediaProvider({
   const _timeoutLoadingId = useRef<number>();
   const _doneSetInitialTime = useRef<boolean>(initialTime === 0);
   const _doneLoadedMetadata = useRef<boolean>(false);
-  const _mediaStateRef = useRef(createMediaState());
+  const [mediaState, setMediaState] = useState<MediaState>({
+    currentTime: 0,
+    duration: 0,
+    ended: false,
+    muted: false,
+    paused: true,
+    playbackRate: 1,
+    rotate: 0,
+    seeking: false,
+    status: MediaStatus.LOADING,
+    volume: 1,
+    buffered: null,
+    autoBitrateEnabled: true,
+    bitrateInfos: [],
+    currentBitrateIndex: DEFAULT_AUTO_BITRATE_INDEX,
+    subtitleTracks: [],
+    currentSubtitleTrackId: DEFAULT_SUBTITLE_ID,
+    audioTracks: [],
+    currentAudioTrackId: DEFAULT_AUDIO_TRACK_ID,
+  });
 
   const _getMedia = (): HTMLMediaElement => {
     if (_mediaRef.current) {
@@ -62,16 +80,13 @@ export function MediaProvider({
   };
 
   const _updateState = (updateValues: Partial<MediaState>) => {
-    for (const key in updateValues) {
-      if (Object.prototype.hasOwnProperty.call(updateValues, key)) {
-        const prop = key as keyof MediaState;
-        // @ts-ignore
-        _mediaStateRef.current[prop] = updateValues[prop];
-      }
-    }
+    setMediaState((prev) => ({
+      ...prev,
+      ...updateValues,
+    }));
   };
 
-  const releaseHlsResource = () => {
+  const _releaseHlsResource = () => {
     const hls = _hlsRef.current;
     if (hls) {
       hls.destroy();
@@ -87,7 +102,7 @@ export function MediaProvider({
     }
   };
 
-  const setLoadingStatus = () => {
+  const _setLoadingStatus = () => {
     const timeoutId = _timeoutLoadingId.current;
     if (timeoutId) {
       clearTimeout(timeoutId);
@@ -117,7 +132,7 @@ export function MediaProvider({
     // In case media's duration is not available, we fall back to duration from state for early seeking if available
     const normalizedDuration = Number.isFinite(media.duration)
       ? media.duration
-      : _mediaStateRef.current.duration;
+      : mediaState.duration;
     const newCurrentTime = clamp(currentTime, 0, normalizedDuration);
 
     if (newCurrentTime !== media.currentTime) {
@@ -152,11 +167,10 @@ export function MediaProvider({
     _updateState({ rotate: 0, autoBitrateEnabled: true });
     // Initial status is LOADING, this is meaningful on stream change
     // as we want to display a loading indicator again until media data is available
-    setLoadingStatus();
+    _setLoadingStatus();
     const media = _getMedia();
 
     const initHls = async () => {
-      const { default: Hls } = await import("hls.js");
       const autoStartLoad =
         initialBitrateSelection === InitialBitrateSelection.AUTO;
 
@@ -199,7 +213,7 @@ export function MediaProvider({
 
         newHls.on(Hls.Events.LEVEL_SWITCHING, (_, { level }) => {
           const { buffered } = _getMedia();
-          setLoadingStatus();
+          _setLoadingStatus();
           _updateState({ currentBitrateIndex: level, buffered });
         });
 
@@ -259,7 +273,7 @@ export function MediaProvider({
               // HLS will try to load the next segment when encounter this error
               // so we can safely consume it as loading state
               case Hls.ErrorDetails.BUFFER_STALLED_ERROR:
-                setLoadingStatus();
+                _setLoadingStatus();
                 break;
             }
           }
@@ -272,14 +286,14 @@ export function MediaProvider({
 
     initHls();
 
-    return releaseHlsResource;
+    return _releaseHlsResource;
   }, [mediaSource]);
 
   useEffect(() => {
     _applyInitialDuration();
   }, [mediaSource]);
 
-  const checkMediaHasDataToPlay = () => {
+  const _checkMediaHasDataToPlay = () => {
     const { buffered, currentTime } = _getMedia();
 
     for (let index = 0; index < buffered.length; index++) {
@@ -322,8 +336,8 @@ export function MediaProvider({
   const _onSeeking = (event: React.SyntheticEvent<HTMLMediaElement, Event>) => {
     const { currentTime, ended, seeking } = event.currentTarget;
     _updateState({ currentTime, ended, seeking });
-    if (!checkMediaHasDataToPlay()) {
-      setLoadingStatus();
+    if (!_checkMediaHasDataToPlay()) {
+      _setLoadingStatus();
     }
   };
 
@@ -364,7 +378,7 @@ export function MediaProvider({
     const { buffered } = event.currentTarget;
     // There are cases when loaded buffer does not include necessary data to play at current time
     // Thus, we need to double-check here
-    if (checkMediaHasDataToPlay()) {
+    if (_checkMediaHasDataToPlay()) {
       setCanPlayStatus();
     }
     _updateState({ buffered });
@@ -373,8 +387,8 @@ export function MediaProvider({
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/waiting_event
   // The name is misleading as the event still gets fired when data is available for playing
   const _onWaiting = () => {
-    if (!checkMediaHasDataToPlay()) {
-      setLoadingStatus();
+    if (!_checkMediaHasDataToPlay()) {
+      _setLoadingStatus();
     }
   };
 
@@ -409,7 +423,7 @@ export function MediaProvider({
     _doneLoadedMetadata.current = false;
     _doneSetInitialTime.current = false;
 
-    setLoadingStatus();
+    _setLoadingStatus();
     // We need to reset this value to update scrubber's indicator
     _updateState({ buffered, currentTime });
   };
@@ -514,7 +528,7 @@ export function MediaProvider({
         setRotate,
 
         _mediaRef,
-        _mediaState: _mediaStateRef.current,
+        mediaState,
 
         // Internal event handlers - we use these to hook into media's events
         _onLoadedMetadata,
