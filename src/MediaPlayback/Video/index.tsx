@@ -125,7 +125,7 @@ export const Video = React.forwardRef<
           }}
           {...mergedEventListeners}
           {...rest}
-          ref={useMergeRefs(ref, _mediaRef as React.Ref<HTMLVideoElement>)}
+          ref={useMergeRefs(ref, _mediaRef)}
         >
           {children}
         </video>

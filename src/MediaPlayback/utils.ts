@@ -1,4 +1,4 @@
-import React, { MutableRefObject } from "react";
+import React, { MutableRefObject, RefObject } from "react";
 
 export const uniqueId = (
   (counter) =>
@@ -43,7 +43,9 @@ export function assignRef<T>(ref: ReactRef<T> | undefined, value: T) {
  *
  * @param refs refs to assign to value to
  */
-export function useMergeRefs<T>(...refs: (ReactRef<T> | undefined)[]) {
+export function useMergeRefs<T>(
+  ...refs: (ReactRef<T> | RefObject<T> | undefined)[]
+) {
   return React.useMemo(() => {
     if (refs.every((ref) => ref == null)) {
       return null;
