@@ -53,8 +53,6 @@ export function useMergeRefs<T>(...refs: (ReactRef<T> | undefined)[]) {
         if (ref) assignRef(ref, node);
       });
     };
-    // It's safe to disable eslint rule here since we know surely refs already is an exhaustive dependencies
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, refs);
 }
 
