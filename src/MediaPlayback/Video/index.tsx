@@ -5,22 +5,12 @@ import { callAll, useMergeRefs } from "../utils";
 import { MergedEventListeners } from "../types";
 import { useVideoSizeBox } from "./useVideoSizeBox";
 
-export interface VideoProps {
-  /**
-   * We don't need this prop anymore as
-   * the Video component is able to scale itself to fit inside its wrapper
-   * @deprecated
-   */
-  useCustomScale?: boolean;
-}
-
 export const Video = React.forwardRef<
   HTMLVideoElement,
-  VideoProps &
-    React.DetailedHTMLProps<
-      React.VideoHTMLAttributes<HTMLVideoElement>,
-      HTMLVideoElement
-    >
+  React.DetailedHTMLProps<
+    React.VideoHTMLAttributes<HTMLVideoElement>,
+    HTMLVideoElement
+  >
 >(
   (
     {
