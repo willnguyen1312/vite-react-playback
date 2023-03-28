@@ -64,6 +64,10 @@ export const Video = React.forwardRef<
       setMediaElement(_mediaRef.current);
     }, []);
 
+    useEffect(() => {
+      _applyInitialDuration();
+    }, [rest.src]);
+
     const isDimensionsSwitched =
       mediaState.rotate === 90 || mediaState.rotate === 270;
 
@@ -99,12 +103,6 @@ export const Video = React.forwardRef<
       onEmptied: callAll(_onEmptied, onEmptied),
       onEnded: callAll(_onEnded, onEnded),
     };
-
-    useEffect(() => {
-      _applyInitialDuration();
-      // This is intentional as we only apply initialDuration on src change
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [rest.src]);
 
     return (
       <div
