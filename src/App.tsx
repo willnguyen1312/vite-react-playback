@@ -20,6 +20,12 @@ function CurrentTime() {
   return <h1>Current time: {currentTime}</h1>;
 }
 
+function PlaybackRate() {
+  const { mediaState } = useMediaContext();
+  const { playbackRate } = mediaState;
+  return <h1>Playback rate: {playbackRate}</h1>;
+}
+
 function Duration() {
   const { mediaState } = useMediaContext();
   return <h1>Duration: {mediaState.duration}</h1>;
@@ -83,6 +89,7 @@ function App() {
       >
         <PlayableControl />
         <CurrentTime />
+        <PlaybackRate />
         <Duration />
         <DisplayData />
       </MediaProvider>
