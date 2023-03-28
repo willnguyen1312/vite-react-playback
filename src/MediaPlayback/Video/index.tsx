@@ -24,7 +24,6 @@ export const Video = React.forwardRef<
 >(
   (
     {
-      className,
       onCanPlay,
       onDurationChange,
       onError,
@@ -130,8 +129,6 @@ export const Video = React.forwardRef<
         }}
       >
         <video
-          // Prevent mobile safari from going fullscreen on play by default
-          playsInline
           style={{
             transform: `rotate(${mediaState.rotate}deg) scale(${scale})`,
             width: videoSizeBox.width,
