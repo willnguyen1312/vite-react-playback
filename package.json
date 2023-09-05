@@ -9,17 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "hls.js": "^1.4.10",
+    "hls.js": "^1.4.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-use": "^17.4.0",
-    "valtio": "^1.11.1"
+    "valtio": "^1.11.2"
   },
   "devDependencies": {
-    "@types/react": "^18.2.18",
+    "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.4",
-    "typescript": "^5.1.6",
-    "vite": "^4.4.7"
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9"
   }
 }
