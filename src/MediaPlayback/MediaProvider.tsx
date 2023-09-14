@@ -1,15 +1,14 @@
-import React, { useEffect, useRef } from "react";
 import type Hls from "hls.js";
+import React, { useEffect, useRef } from "react";
 
-import { clamp, uniqueId } from "./utils";
 import { MediaContext } from "./MediaContext";
+import { createMediaState } from "./MediaObserver";
 import {
   DEFAULT_AUDIO_TRACK_ID,
   DEFAULT_AUTO_BITRATE_INDEX,
   DEFAULT_SUBTITLE_ID,
   MediaStatus,
 } from "./constants";
-import { createMediaState } from "./MediaObserver";
 import {
   AudioTrack,
   BitrateInfo,
@@ -17,6 +16,7 @@ import {
   MediaState,
   SubtitleTrack,
 } from "./types";
+import { clamp, uniqueId } from "./utils";
 
 export interface MediaProviderProps {
   initialDuration?: number;
@@ -66,7 +66,7 @@ export function MediaProvider({
   };
 
   const _updateState = (updateValues: Partial<MediaState>) => {
-    _mediaStateRef.current?.update(updateValues)
+    _mediaStateRef.current?.update(updateValues);
   };
 
   const _releaseHlsResource = () => {
@@ -493,15 +493,16 @@ export function MediaProvider({
   return (
     <MediaContext.Provider
       value={{
+        // Media initial state
         _initialDuration: initialDuration,
         _applyInitialDuration,
-        setCurrentBitrateIndex,
-        setCurrentSubtitleId,
-        setCurrentAudioTrackId,
 
         // Stream methods
         _startLoad,
         _stopLoad,
+        setCurrentBitrateIndex,
+        setCurrentSubtitleId,
+        setCurrentAudioTrackId,
 
         // Media methods
         setCurrentTime,
@@ -511,6 +512,7 @@ export function MediaProvider({
         setPaused,
         setRotate,
 
+        // Media ref and state
         _mediaRef,
         _mediaState: _mediaStateRef.current,
 
