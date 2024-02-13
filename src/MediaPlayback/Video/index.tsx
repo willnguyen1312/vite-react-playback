@@ -45,7 +45,7 @@ export const Video = React.forwardRef<
       style,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const {
       _mediaRef,
@@ -146,7 +146,7 @@ export const Video = React.forwardRef<
         </video>
       </div>
     );
-  }
+  },
 );
 
 Video.displayName = `Video`;

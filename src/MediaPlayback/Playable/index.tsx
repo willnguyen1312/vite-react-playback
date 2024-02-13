@@ -9,7 +9,7 @@ interface HijackedMediaElement extends HTMLMediaElement {
 
 const hijackMediaElement = (
   mediaElement: HijackedMediaElement,
-  { frequency, duration }: { frequency: number; duration: number }
+  { frequency, duration }: { frequency: number; duration: number },
 ): {
   cleanup: () => void;
 } => {

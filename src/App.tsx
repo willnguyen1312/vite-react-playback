@@ -35,13 +35,7 @@ const generateMockData = (duration: number) => {
 const mockedData = generateMockData(3000);
 
 function VideoPlayer() {
-  return (
-    <Video
-      width="810"
-      height="450"
-      controls
-    />
-  );
+  return <Video width="810" height="450" controls />;
 }
 
 function CurrentTime() {
@@ -74,7 +68,7 @@ function Rotation() {
 }
 
 function Static() {
-  return <h2>I'm static. No need to re-render me 🥹</h2>
+  return <h2>I'm static. No need to re-render me 🥹</h2>;
 }
 
 function App() {
@@ -86,10 +80,8 @@ function App() {
         flexDirection: "column",
       }}
     >
-      <MediaProvider
-        mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8"
-      >
-        <div style={{ height: 500, background: 'black' }}>
+      <MediaProvider mediaSource="https://playertest.longtailvideo.com/adaptive/elephants_dream_v4/redundant.m3u8">
+        <div style={{ height: 500, background: "black" }}>
           <VideoPlayer />
         </div>
         <CurrentTime />

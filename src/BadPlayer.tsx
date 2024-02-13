@@ -5,16 +5,16 @@ interface NotSoGoodMediaPlayerProps {
   controlBarClassName?: string;
   //   Business specific props
   policeDepartmentId?: string;
-  policePartnerDepartmentId?: string
+  policePartnerDepartmentId?: string;
   // 10+ more props
   showScrubber?: boolean;
   showVolume?: boolean;
   showPlaybackRate?: boolean;
-  showFullscreen?: boolean
+  showFullscreen?: boolean;
 }
 
 function App() {
-    return <NotSoGoodMediaPlayer   />
+  return <NotSoGoodMediaPlayer />;
 }
 
 function NotSoGoodMediaPlayer(props: NotSoGoodMediaPlayerProps) {

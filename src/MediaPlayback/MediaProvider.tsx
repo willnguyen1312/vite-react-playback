@@ -46,7 +46,7 @@ export function MediaProvider({
   const _mediaStateRef = useRef<ReturnType<typeof createMediaState>>();
 
   if (!_mediaStateRef.current) {
-    _mediaStateRef.current = createMediaState()
+    _mediaStateRef.current = createMediaState();
   }
 
   const _getMedia = (): HTMLMediaElement => {
@@ -185,7 +185,7 @@ export function MediaProvider({
 
           if (!autoStartLoad) {
             const sortedBitrateInfos = bitrateInfos.sort(
-              (aBitrate, bBitrate) => aBitrate.height - bBitrate.height
+              (aBitrate, bBitrate) => aBitrate.height - bBitrate.height,
             );
             const handlers = {
               [InitialBitrateSelection.HIGHEST]: () =>
@@ -226,7 +226,7 @@ export function MediaProvider({
               id: track.id,
               lang: track.lang || "",
               name: track.name,
-            })
+            }),
           );
           _updateState({ audioTracks });
         });
@@ -309,7 +309,7 @@ export function MediaProvider({
   };
 
   const _onLoadedMetadata = (
-    event: React.SyntheticEvent<HTMLMediaElement, Event>
+    event: React.SyntheticEvent<HTMLMediaElement, Event>,
   ) => {
     _doneLoadedMetadata.current = true;
     const mediaElement = event.currentTarget;
@@ -338,13 +338,13 @@ export function MediaProvider({
   };
 
   const _onRateChange = (
-    event: React.SyntheticEvent<HTMLMediaElement, Event>
+    event: React.SyntheticEvent<HTMLMediaElement, Event>,
   ) => {
     _updateState({ playbackRate: event.currentTarget.playbackRate });
   };
 
   const _onVolumeChange = (
-    event: React.SyntheticEvent<HTMLMediaElement, Event>
+    event: React.SyntheticEvent<HTMLMediaElement, Event>,
   ) => {
     const { muted, volume } = event.currentTarget;
     _updateState({ muted, volume });
@@ -363,7 +363,7 @@ export function MediaProvider({
   };
 
   const _onProgress = (
-    event: React.SyntheticEvent<HTMLMediaElement, Event>
+    event: React.SyntheticEvent<HTMLMediaElement, Event>,
   ) => {
     const { buffered } = event.currentTarget;
     // There are cases when loaded buffer does not include necessary data to play at current time
@@ -383,7 +383,7 @@ export function MediaProvider({
   };
 
   const _onTimeUpdate = (
-    event: React.SyntheticEvent<HTMLMediaElement, Event>
+    event: React.SyntheticEvent<HTMLMediaElement, Event>,
   ) => {
     if (_doneSetInitialTime.current) {
       _updateState({ currentTime: event.currentTarget.currentTime });
@@ -391,7 +391,7 @@ export function MediaProvider({
   };
 
   const _onDurationChange = (
-    event: React.SyntheticEvent<HTMLMediaElement, Event>
+    event: React.SyntheticEvent<HTMLMediaElement, Event>,
   ) => {
     const duration = event.currentTarget.duration;
     // Handle Infinity value occasionally on Safari
@@ -459,7 +459,7 @@ export function MediaProvider({
   };
 
   const setCurrentBitrateIndex = (
-    bitrateIndex = DEFAULT_AUTO_BITRATE_INDEX
+    bitrateIndex = DEFAULT_AUTO_BITRATE_INDEX,
   ) => {
     const autoBitrateEnabled = bitrateIndex === DEFAULT_AUTO_BITRATE_INDEX;
     _updateState({ autoBitrateEnabled });
@@ -503,7 +503,7 @@ export function MediaProvider({
         _applyInitialDuration,
         _startLoad,
         _stopLoad,
-        
+
         // Media methods
         setCurrentTime,
         setPlaybackRate,
@@ -514,7 +514,7 @@ export function MediaProvider({
         setCurrentBitrateIndex,
         setCurrentSubtitleId,
         setCurrentAudioTrackId,
-        
+
         _mediaRef,
         _mediaState: _mediaStateRef.current,
 

@@ -5,7 +5,7 @@ import { callAll } from "./utils";
 import { MediaStatus } from "./constants";
 
 export type MediaEventListener = (
-  event: React.SyntheticEvent<HTMLMediaElement, Event>
+  event: React.SyntheticEvent<HTMLMediaElement, Event>,
 ) => void;
 
 type MediaContextInternalEvents =

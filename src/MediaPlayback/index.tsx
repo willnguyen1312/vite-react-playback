@@ -1,2 +1,2 @@
-export * from './MediaProvider'
-export * from './MediaContext'
+export * from "./MediaProvider";
+export * from "./MediaContext";
